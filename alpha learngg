@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnGG</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #ff9900; 
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --terminal-bg: #000000;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            
+            --noob-timer: #22c55e;
+            --entusiasta-timer: #ff9900;
+            --tryhard-timer: #ef4444;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Fira Code', monospace;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+       
+        #creation-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(135deg, var(--bg-dark) 40%, var(--primary-color));
+            z-index: 1000;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            padding: 2rem;
+            box-sizing: border-box;
+            transition: background 0.5s ease;
+            gap: 20px;
+        }
+
+        .cc-panel {
+            background: rgba(30, 41, 59, 0.95);
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .cc-panel h2 { text-align: center; color: var(--primary-color); border-bottom: 2px solid var(--primary-color); padding-bottom: 10px; }
+
+        /* Cores */
+        .color-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 20px; }
+        .color-btn { width: 60px; height: 60px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; margin: 0 auto; transition: 0.2s; }
+        .color-btn:hover { transform: scale(1.1); }
+        .color-btn.selected { border-color: white; box-shadow: 0 0 15px var(--primary-color); }
+
+        /* Classes */
+        .class-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .class-btn { background: #334155; border: 2px solid transparent; border-radius: 50%; width: 100px; height: 100px; cursor: pointer; margin: 0 auto; color: white; display: flex; align-items: center; justify-content: center; flex-direction: column; transition: 0.3s; }
+        .class-btn i { font-size: 2rem; margin-bottom: 5px; }
+        .class-btn.selected { border-color: var(--primary-color); background: #0f172a; }
+
+        /* Centro: Avatar e Nome */
+        .avatar-preview { width: 180px; height: 130px; border-radius: 50%; background: #020617; border: 4px solid var(--primary-color); margin: 0 auto; display: flex; align-items: center; justify-content: center; font-size: 4rem; color: var(--primary-color); }
+        .trapezoid { width: 220px; height: 40px; border-bottom: 40px solid #334155; border-left: 20px solid transparent; border-right: 20px solid transparent; margin: 10px auto 30px; position: relative; }
+        
+        input[type="text"] { width: 100%; padding: 15px; border-radius: 8px; border: 2px solid #334155; background: #020617; color: white; font-size: 1.2rem; text-align: center; box-sizing: border-box; margin-top: auto; }
+        input[type="text"]:focus { border-color: var(--primary-color); outline: none; }
+
+        .btn-confirm { background: var(--primary-color); color: white; border: none; padding: 15px; border-radius: 8px; font-size: 1.2rem; cursor: pointer; font-weight: bold; margin-top: 20px; transition: 0.3s; }
+        .btn-confirm:hover { filter: brightness(1.2); }
+
+        
+        #main-dashboard { display: grid; grid-template-columns: 300px 1fr 300px; width: 100%; height: 100%; display: none; }
+
+        
+        .sidebar-left { background: var(--card-bg); padding: 2rem; border-right: 1px solid #334155; display: flex; flex-direction: column; }
+        
+        .timer-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 1rem; }
+        .timer-btn { background: #1a2333; border: 2px solid transparent; border-radius: 8px; padding: 15px; cursor: pointer; text-align: center; transition: 0.2s; color: white; }
+        .timer-btn:hover { transform: translateY(-3px); }
+        .timer-btn i { font-size: 1.8rem; margin-bottom: 5px; }
+        .timer-btn p { margin: 2px 0; font-size: 0.8rem; }
+        
+        .timer-btn.noob { border-color: var(--noob-timer); }
+        .timer-btn.entusiasta { border-color: var(--entusiasta-timer); }
+        .timer-btn.tryhard { border-color: var(--tryhard-timer); }
+
+        #stop-btn { background: #ef4444; color: white; border: none; width: 100%; margin-top: 10px; padding: 10px; cursor: pointer; border-radius: 4px; font-weight: bold; display: none; }
+
+        
+        main { padding: 2rem; overflow-y: auto; }
+        .mission-box { background: var(--card-bg); padding: 2rem; border-radius: 12px; margin-bottom: 1rem; border-left: 5px solid var(--primary-color); border-radius: 8px; border-top: 4px solid var(--tryhard-timer); } /* Estilização extra de tryhard */
+        
+        
+        .sidebar-right { background: #020617; padding: 1rem; display: flex; flex-direction: column; border-left: 1px solid #334155; }
+        textarea { flex-grow: 1; background: #1e293b; color: #10b981; border: none; padding: 1rem; border-radius: 8px; resize: none; font-family: inherit; margin-bottom: 1rem; }
+        #terminal { background: var(--terminal-bg); color: var(--primary-color); padding: 1rem; height: 150px; font-size: 0.8rem; overflow-y: auto; border-radius: 8px; }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div id="creation-screen">
+        
+        <div class="cc-panel">
+            <h2>Personalização</h2>
+            <p>ESCOLHA A COR DO FUNDO</p>
+            <div class="color-grid">
+                <div class="color-btn selected" style="background: #e31b23" onclick="setColor('#e31b23', this)"></div>
+                <div class="color-btn" style="background: #0047bb" onclick="setColor('#0047bb', this)"></div>
+                <div class="color-btn" style="background: #111111" onclick="setColor('#444444', this)"></div>
+                <div class="color-btn" style="background: #00a650" onclick="setColor('#00a650', this)"></div>
+                <div class="color-btn" style="background: #ffc40d" onclick="setColor('#ffc40d', this)"></div>
+                <div class="color-btn" style="background: #888888" onclick="setColor('#888888', this)"></div>
+            </div>
+
+            <p style="margin-top: 30px;">ESCOLHA SUA CLASSE</p>
+            <div class="class-grid">
+                <div class="class-btn" id="btn-guerreiro" onclick="setClass('Guerreiro')">
+                    <i class="fas fa-shield-alt"></i> Guerreiro
+                </div>
+                <div class="class-btn" id="btn-bardo" onclick="setClass('Bardo')">
+                    <i class="fas fa-guitar"></i> Bardo
+                </div>
+            </div>
+        </div>
+
+        <div class="cc-panel" style="justify-content: center; background: transparent; border: none; box-shadow: none;">
+            <div class="avatar-preview" id="avatar-icon"><i class="fas fa-user-astronaut"></i></div>
+            <div class="trapezoid"></div>
+            <input type="text" id="char-name" placeholder="Digite seu Nome de Arquiteto..." autocomplete="off">
+        </div>
+
+        <div class="cc-panel">
+            <h2>Fundamentos da Classe</h2>
+            <div id="class-info" style="flex-grow: 1; padding: 10px; line-height: 1.6; color: var(--text-dim);">
+                Selecione uma classe à esquerda para ver os requisitos de sistema e o estilo de aprendizado.
+            </div>
+            <button class="btn-confirm" onclick="confirmCharacter()">Confirmar Criação</button>
+        </div>
+
+    </div>
+
+    <div id="main-dashboard">
+        
+        <aside class="sidebar-left">
+            <h2 id="dash-class-title" style="color: var(--primary-color); text-align: center; margin: 0;">CLASSE</h2>
+            <p id="dash-name" style="font-size: 1.2rem; font-weight: bold; text-align: center; margin: 5px 0;">Nome</p>
+            <hr style="border: 0.5px solid #334155; width: 100%; margin: 1rem 0">
+            
+            <div class="progress-container" style="height: 10px; background: #334155; border-radius: 5px; overflow: hidden; margin-bottom: 2rem;">
+                <div id="bar-lvl" style="width: 25%; height: 100%; background: var(--primary-color); transition: 0.5s"></div>
+            </div>
+
+            <h4 style="color: var(--text-dim); text-align: center;">TEMPO DE FOCO</h4>
+            <p id="timer-display" style="font-size: 2.5rem; text-align: center; font-weight: bold; color: white;">00:00</p>
+            
+            <div class="timer-grid">
+                <button class="timer-btn noob" onclick="startTimer(15, 'NOOB')">
+                    <i class="fas fa-clock" style="color: var(--noob-timer)"></i>
+                    <p>15 MIN</p><p>NOOB</p>
+                </button>
+                <button class="timer-btn entusiasta" onclick="startTimer(25, 'ENTUSIASTA')">
+                    <i class="fas fa-clock" style="color: var(--entusiasta-timer)"></i>
+                    <p>25 MIN</p><p>PRO</p>
+                </button>
+                <button class="timer-btn tryhard" onclick="startTimer(35, 'TRYHARD')">
+                    <i class="fas fa-clock" style="color: var(--tryhard-timer)"></i>
+                    <p>35 MIN</p><p>HARD</p>
+                </button>
+            </div>
+            <button id="stop-btn" onclick="stopTimer()">Parar Foco</button>
+
+            <div style="margin-top: auto;">
+                <p style="font-size: 0.8rem; color: var(--text-dim);">XP Infra: <span id="stat-infra" style="color: var(--primary-color)">0</span></p>
+            </div>
+        </aside>
+
+        <main>
+            <h1 style="color: var(--primary-color)">Painel de Operações Cloud</h1>
+            
+            <div class="mission-box">
+                <h3>[Missão 1] A Fundação da Névoa</h3>
+                <p id="narrative-text">Favor inicializar instância EC2 seguindo protocolo de segurança.</p>
+                <button class="action" style="background: var(--card-bg); color: white; border: 1px solid #334155; padding: 10px; border-radius: 4px; cursor: pointer;">Resolver via Terminal</button>
+            </div>
+        </main>
+
+        <aside class="sidebar-right">
+            <h4>> DIÁRIO DO DEV</h4>
+            <textarea id="dev-notes" placeholder="Sincronizando pensamentos..."></textarea>
+            
+            <div id="terminal">
+                <div>> Sistema Inicializado...</div>
+            </div>
+            <button class="btn-confirm" style="font-size: 0.9rem; margin-top: 10px;" onclick="resetGame()">Deletar Personagem</button>
+        </aside>
+    </div>
+
+    <script>
+        
+        let profile = { color: '#ff9900', class: '', name: '', styleText: '' };
+        let gameState = JSON.parse(localStorage.getItem('cloud_game')) || null;
+        let timerInterval;
+        let totalSeconds;
+
+       
+        window.onload = () => {
+            if (gameState && gameState.profile) {
+               
+                profile = gameState.profile;
+                applyProfileToDashboard();
+                document.getElementById('creation-screen').style.display = 'none';
+                document.getElementById('main-dashboard').style.display = 'grid';
+            }
+        };
+
+        function setColor(hex, element) {
+            document.documentElement.style.setProperty('--primary-color', hex);
+            profile.color = hex;
+            
+            
+            document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+
+        function setClass(className) {
+            profile.class = className;
+            const infoBox = document.getElementById('class-info');
+            
+            document.querySelectorAll('.class-btn').forEach(btn => btn.classList.remove('selected'));
+
+            if(className === 'Guerreiro') {
+                document.getElementById('btn-guerreiro').classList.add('selected');
+                document.getElementById('avatar-icon').innerHTML = '<i class="fas fa-user-shield"></i>';
+                profile.styleText = "Formal, preciso, estruturado.";
+                infoBox.innerHTML = `
+                    <h3 style="color: white;">Guerreiro da Infraestrutura</h3>
+                    <p><strong>Requisitos:</strong> Alta capacidade analítica, proficiência em arquitetura de sistemas rígidas.</p>
+                    <p><strong>Estilo de IA:</strong> Formal, direto ao ponto.</p>
+                    <p style="font-style: italic;">"Favor inicializar instância EC2, acoplar volume S3 e executar rotação segura."</p>
+                `;
+            } else {
+                document.getElementById('btn-bardo').classList.add('selected');
+                document.getElementById('avatar-icon').innerHTML = '<i class="fas fa-magic"></i>';
+                profile.styleText = "Aberto, brincalhão, explorador.";
+                infoBox.innerHTML = `
+                    <h3 style="color: white;">Bardo da Nuvem (Serverless)</h3>
+                    <p><strong>Requisitos:</strong> Criatividade para fluxo de dados, mentalidade de exploração (Lambdas).</p>
+                    <p><strong>Estilo de IA:</strong> Descontraído, usa analogias.</p>
+                    <p style="font-style: italic;">"Vamos fazer uma mágica com o S3, rodar umas funções e ver o que acontece!"</p>
+                `;
+            }
+        }
+
+        function confirmCharacter() {
+            const nameInput = document.getElementById('char-name').value;
+            profile.name = nameInput.trim() !== '' ? nameInput : 'Anônimo';
+
+            if (!profile.class) {
+                alert("Por favor, selecione sua Classe antes de iniciar a jornada.");
+                return;
+            }
+
+           
+            gameState = {
+                profile: profile,
+                level: 1,
+                infra: 0,
+                notes: ""
+            };
+            localStorage.setItem('cloud_game', JSON.stringify(gameState));
+
+            
+            document.getElementById('creation-screen').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('creation-screen').style.display = 'none';
+                applyProfileToDashboard();
+                document.getElementById('main-dashboard').style.display = 'grid';
+            }, 500);
+        }
+
+        function applyProfileToDashboard() {
+            
+            document.documentElement.style.setProperty('--primary-color', profile.color);
+            
+           
+            document.getElementById('dash-class-title').innerText = profile.class.toUpperCase();
+            document.getElementById('dash-name').innerText = profile.name;
+            document.getElementById('dev-notes').value = gameState.notes || "";
+            
+            
+            const narrative = document.getElementById('narrative-text');
+            if(profile.class === 'Guerreiro') {
+                narrative.innerText = "Objetivo Primário: Provisionar recurso de computação escalável seguindo protocolo de segurança restrito.";
+            } else {
+                narrative.innerText = "Bora subir nosso primeiro código na nuvem! Precisamos achar um lugar legal pra ele rodar sem dor de cabeça.";
+            }
+
+            logTerminal(`Bem-vindo de volta, ${profile.class} ${profile.name}.`);
+        }
+
+        function startTimer(minutes, mode) {
+            clearInterval(timerInterval); // Para qualquer timer rodando
+            totalSeconds = minutes * 60;
+            updateDisplay();
+            document.getElementById('stop-btn').style.display = 'block';
+            logTerminal(`Modo Foco ${mode} iniciado. Disciplina simbólica em processo...`);
+
+            timerInterval = setInterval(() => {
+                totalSeconds--;
+                updateDisplay();
+
+                if (totalSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById('stop-btn').style.display = 'none';
+                    logTerminal(`Parabéns! Foco ${mode} concluído. Sua disciplina simbólica agradece!`);
+                    
+                }
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            document.getElementById('timer-display').innerText = "00:00";
+            document.getElementById('stop-btn').style.display = 'none';
+            logTerminal("Foco interrompido. Reinicie quando estiver pronto.");
+        }
+
+        function updateDisplay() {
+            const mins = Math.floor(totalSeconds / 60);
+            const secs = totalSeconds % 60;
+            document.getElementById('timer-display').innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function logTerminal(msg) {
+            const term = document.getElementById('terminal');
+            term.innerHTML += `<div>> ${msg}</div>`;
+            term.scrollTop = term.scrollHeight;
+        }
+
+        document.getElementById('dev-notes').addEventListener('input', (e) => {
+            if(gameState) {
+                gameState.notes = e.target.value;
+                localStorage.setItem('cloud_game', JSON.stringify(gameState));
+            }
+        });
+
+        function resetGame() {
+            if(confirm("ATENÇÃO: Isso deletará seu personagem e progresso. Tem certeza?")) {
+                localStorage.removeItem('cloud_game');
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
