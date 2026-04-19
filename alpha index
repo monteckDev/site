@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HUB</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
+        
+        .container { display: flex; height: 100%; width: 100%; }
+
+        
+        .section-dev { 
+            flex: 1; background-color: #6b4c9a; color: white; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: 0.5s; cursor: pointer; border-right: 2px solid #000; text-decoration: none;
+        }
+
+        
+        .section-game { 
+            flex: 1; background-color: #b9c941; color: black; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: 0.5s; cursor: pointer; text-decoration: none;
+        }
+
+        .section-dev:hover { flex: 1.2; background-color: #7c5cb4; }
+        .section-game:hover { flex: 1.2; background-color: #c9d951; }
+
+        .circle { 
+    width: 150px;  
+    height: 150px; 
+    border-radius: 50%; 
+    border: 4px solid #000;
+    background: white; 
+    margin: 20px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    overflow: hidden; 
+}
+
+        h2 { font-size: 1.2rem; margin: 0; text-transform: uppercase; }
+        h1 { font-size: 3rem; margin: 10px 0; font-weight: 900; }
+
+        .link { text-decoration: none; color: inherit; display: flex; flex-direction: column; align-items: center; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <a href="sobre.html" class="section-dev">
+            <h2>SOBRE MIM</h2>
+            <h1>MONTECK DEV</h1>
+            <div class="circle">
+                <img src="eu.png" style="width: 180px; object-fit: cover;"> eu </div>
+        </a>
+
+        <a href="learngg.html" class="section-game">
+            <h2>PROJETOS:</h2>
+            <h1>LEARNGG (ALPHA)</h1>
+            <div class="circle">
+                <img src="learngglogo.png" LEARNGG style="width: 300px; object-fit: cover;"> </div>
+        </a>
+    </div>
+
+</body>
+</html>
