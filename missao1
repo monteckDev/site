@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnGG | Missão 1: Core Init</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Orbitron:wght@700&family=VT323&display=swap');
+
+        :root {
+            --bg-base: #020205; --bg-panel: #0a0b10; --accent-primary: #00ffcc; 
+            --accent-glow: rgba(0, 255, 204, 0.4); --text-main: #e2e8f0; 
+            --text-muted: #475569; --border-color: #1e293b;
+        }
+
+        body { 
+            background-color: var(--bg-base); color: var(--text-main); 
+            font-family: 'Fira Code', monospace; margin: 0; display: flex; 
+            justify-content: center; align-items: center; min-height: 100vh; 
+            overflow: hidden; background-image: radial-gradient(circle at 50% 50%, #0f172a 0%, transparent 80%); 
+        }
+
+        .quest-container { 
+            width: 100%; max-width: 1000px; background: var(--bg-panel); 
+            border: 1px solid var(--border-color); border-radius: 12px; 
+            box-shadow: 0 0 30px rgba(0,0,0,0.9); display: grid; 
+            grid-template-columns: 1fr 1fr; position: relative; z-index: 10; 
+        }
+
+        .quest-header { 
+            grid-column: 1 / -1; background: #000; padding: 20px 30px; 
+            border-bottom: 1px solid var(--accent-primary); display: flex; 
+            justify-content: space-between; align-items: center; 
+        }
+
+        .quest-title { font-family: 'Orbitron', sans-serif; font-size: 1.4rem; color: var(--accent-primary); margin: 0; text-transform: uppercase; }
+
+        .lore-panel { padding: 30px; border-right: 1px solid var(--border-color); }
+        .code-block { background: #000; padding: 15px; border-radius: 4px; border-left: 3px solid var(--accent-primary); color: #a78bfa; margin: 15px 0; font-size: 0.9rem; }
+
+        .action-panel { padding: 30px; display: flex; flex-direction: column; }
+        .objective-box { background: rgba(0, 255, 204, 0.03); border: 1px dashed var(--accent-primary); padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+
+        .fake-terminal { background: #000; border-radius: 4px; border: 1px solid #334155; margin-top: auto; }
+        .terminal-header { background: #1e293b; padding: 5px 15px; font-size: 0.7rem; color: #94a3b8; display: flex; gap: 5px; }
+        .terminal-dot { width: 8px; height: 8px; border-radius: 50%; background: #ff5f56; }
+        .terminal-body { padding: 15px; display: flex; align-items: center; }
+        .terminal-body span { color: var(--accent-primary); margin-right: 10px; font-weight: bold; }
+        
+        input { background: transparent; border: none; color: #fff; font-family: 'Fira Code', monospace; width: 100%; outline: none; font-size: 1rem; }
+
+        .btn-cast { 
+            background: transparent; color: var(--accent-primary); border: 1px solid var(--accent-primary); 
+            padding: 15px; width: 100%; border-radius: 4px; font-family: 'Orbitron', sans-serif; 
+            cursor: pointer; transition: 0.3s; margin-top: 15px; text-transform: uppercase; 
+        }
+        .btn-cast:hover { background: var(--accent-primary); color: #000; box-shadow: 0 0 15px var(--accent-glow); }
+
+        #feedback-modal { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.9); display: flex; justify-content: center; 
+            align-items: center; z-index: 1000; opacity: 0; pointer-events: none; transition: 0.3s; 
+        }
+        .modal-content { background: #0a0b10; border: 1px solid var(--accent-primary); padding: 40px; border-radius: 8px; text-align: center; max-width: 400px; }
+        #feedback-modal.active { opacity: 1; pointer-events: all; }
+
+        #rpg-transition {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at center, #0a0b10, #000);
+            z-index: 9999; display: none; flex-direction: column;
+            justify-content: center; align-items: center; opacity: 0;
+            transition: opacity 0.3s;
+        }
+        #rpg-transition.active { display: flex; opacity: 1; }
+        
+        .d20-container { width: 300px; height: 300px; filter: drop-shadow(0 0 20px rgba(0, 255, 204, 0.4)); transform-origin: center; }
+        .d20-svg { width: 100%; height: 100%; animation: spin-roll 1.5s cubic-bezier(0.1, 0.8, 0.2, 1) forwards; }
+        
+        @keyframes spin-roll {
+            0% { transform: scale(0.1) rotate(-1080deg); opacity: 0; }
+            50% { transform: scale(1.2) rotate(180deg); opacity: 1; filter: drop-shadow(0 0 50px #00ffcc); }
+            100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 30px #00ffcc); }
+        }
+        
+        .critical-hit { animation: hit-shake 0.3s ease-in-out; }
+        @keyframes hit-shake {
+            0% { transform: scale(1); filter: drop-shadow(0 0 30px #00ffcc); }
+            50% { transform: scale(1.1); filter: drop-shadow(0 0 80px #fff); }
+            100% { transform: scale(1); filter: drop-shadow(0 0 30px #00ffcc); }
+        }
+
+        #d20-number {
+            font-family: 'VT323', monospace !important;
+            font-size: 35px !important;
+        }
+
+        .roll-text {
+            color: #00ffcc; font-family: 'VT323', monospace;
+            font-size: 2rem; margin-top: 40px; letter-spacing: 3px;
+            text-shadow: 0 0 10px #00ffcc; opacity: 0;
+        }
+        .roll-text.show { animation: fadeIn 0.5s forwards; }
+        @keyframes fadeIn { to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="quest-container">
+        <div class="quest-header">
+            <h1 class="quest-title"><i class="fas fa-microchip"></i> Missão 01: Core Init</h1>
+            <div style="color: var(--accent-primary); font-weight: bold;">+50 XP</div>
+        </div>
+
+        <div class="lore-panel">
+            <h3><i class="fas fa-terminal"></i> Injeção de Código</h3>
+            <p>O comando <code>Console.WriteLine</code> envia um pacote de texto para a saída do sistema.</p>
+            <div class="code-block">Console.WriteLine("Data");</div>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">* Sintaxe obrigatória: Ponto e vírgula ao final e aspas duplas para strings.</p>
+        </div>
+
+        <div class="action-panel">
+            <div class="objective-box">
+                <p>O servidor aguarda o sinal de ativação. Envie exatamente:</p>
+                <p style="color: var(--accent-primary); text-align: center; font-weight: bold; letter-spacing: 1px;">SISTEMA INICIALIZADO</p>
+            </div>
+            <div class="fake-terminal">
+                <div class="terminal-header"><div class="terminal-dot"></div><span>bash</span></div>
+                <div class="terminal-body">
+                    <span>></span>
+                    <input type="text" id="answer" placeholder="Digite o comando..." autocomplete="off">
+                </div>
+            </div>
+            <button class="btn-cast" onclick="checkAnswer()">Executar Scripts</button>
+        </div>
+    </div>
+
+    <div id="feedback-modal">
+        <div class="modal-content">
+            <h2 id="modal-title" style="color: var(--accent-primary);">Sucesso!</h2>
+            <p id="modal-text">Sinal enviado para o núcleo.</p>
+            <button class="btn-cast" onclick="rolarDadoEAvancar()">Avançar ➔</button>
+        </div>
+    </div>
+
+    <div id="rpg-transition">
+        <div class="d20-container" id="d20-box">
+            <svg viewBox="0 0 100 100" class="d20-svg">
+                <polygon points="50,5 90,28 90,72 50,95 10,72 10,28" fill="rgba(0, 255, 204, 0.05)" stroke="#00ffcc" stroke-width="2" stroke-linejoin="round"/>
+                <polygon points="25,35 75,35 50,65" fill="rgba(0, 255, 204, 0.1)" stroke="#00ffcc" stroke-width="2" stroke-linejoin="round"/>
+                <line x1="50" y1="5" x2="25" y2="35" stroke="#00ffcc" stroke-width="2"/>
+                <line x1="50" y1="5" x2="75" y2="35" stroke="#00ffcc" stroke-width="2"/>
+                <line x1="10" y1="28" x2="25" y2="35" stroke="#00ffcc" stroke-width="2"/>
+                <line x1="90" y1="28" x2="75" y2="35" stroke="#00ffcc" stroke-width="2"/>
+                <line x1="10" y1="72" x2="25" y2="35" stroke="#00ffcc" stroke-width="2"/>
+                <line x1="10" y1="72" x2="50" y2="65" stroke="#00ffcc" stroke-width="2"/>
+                <line x1="90" y1="72" x2="75" y2="35" stroke="#00ffcc" stroke-width="2"/>
+                <line x1="90" y1="72" x2="50" y2="65" stroke="#00ffcc" stroke-width="2"/>
+                <line x1="50" y1="95" x2="50" y2="65" stroke="#00ffcc" stroke-width="2"/>
+                <text x="50" y="52" text-anchor="middle" dominant-baseline="middle" fill="#00ffcc" id="d20-number">1</text>
+            </svg>
+        </div>
+        <div class="roll-text" id="roll-text">TESTE DE HABILIDADE...</div>
+    </div>
+
+    <script>
+        function checkAnswer() {
+            const res = document.getElementById('answer').value.trim();
+            if (res === 'Console.WriteLine("SISTEMA INICIALIZADO");') {
+                document.getElementById('feedback-modal').classList.add('active');
+            } else {
+                alert("Erro de Sintaxe. Verifique o código (maiúsculas, aspas e ponto e vírgula).");
+            }
+        }
+
+        document.getElementById('answer').addEventListener('keypress', (e) => { 
+            if (e.key === 'Enter') checkAnswer(); 
+        });
+
+        function rolarDadoEAvancar() {
+            document.getElementById('feedback-modal').classList.remove('active');
+
+            const transitionScreen = document.getElementById('rpg-transition');
+            const numberEl = document.getElementById('d20-number');
+            const textEl = document.getElementById('roll-text');
+            const d20Box = document.getElementById('d20-box');
+
+            transitionScreen.classList.add('active');
+            textEl.classList.add('show');
+
+            let rolls = 0;
+            const rollInterval = setInterval(() => {
+                numberEl.textContent = Math.floor(Math.random() * 20) + 1;
+                rolls++;
+
+                if (rolls >= 25) {
+                    clearInterval(rollInterval);
+                    numberEl.textContent = "20"; 
+                    numberEl.setAttribute('fill', '#fff');
+                    d20Box.classList.add('critical-hit');
+                    textEl.textContent = "SUCESSO CRÍTICO!";
+                    textEl.style.color = "#fff";
+
+                    setTimeout(() => {
+                        window.location.href = 'missao2.html'; 
+                    }, 1500);
+                }
+            }, 60);
+        }
+    </script>
+</body>
+</html>
