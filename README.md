@@ -1,4 +1,4 @@
-Projeto de metodlogia de ensino
+Projeto de metodologia de ensino
 
 Chama-se LearnGG;
 
