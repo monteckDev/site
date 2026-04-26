@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HUB</title>
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
+        .container { display: flex; height: 100%; width: 100%; }
+
+        .section-dev { 
+            flex: 1; background-color: #6b4c9a; color: white; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; transition: flex 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+            cursor: pointer; border-right: 2px solid #000; text-decoration: none; overflow: hidden; 
+        }
+
+        .section-game { 
+            flex: 9; background-color: #b9c941; color: black; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; transition: flex 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); 
+            cursor: pointer; text-decoration: none; overflow: hidden;
+        }
+
+        .container:hover .section-dev:hover { flex: 2.25; }
+        .container:hover .section-game:hover { flex: 9; } 
+        .container:hover .section-dev:not(:hover) { flex: 1; }
+        .container:hover .section-game:not(:hover) { flex: 9; }
+
+        .content { display: flex; flex-direction: column; align-items: center; min-width: 350px; }
+        .circle { width: 150px; height: 150px; border-radius: 50%; border: 4px solid #000; background: white; margin: 20px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .circle img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .start-box { margin-top: 20px; padding: 15px 40px; background-color: #000; color: #b9c941; font-size: 1.5rem; font-weight: 900; border-radius: 50px; display: flex; align-items: center; gap: 15px; transition: 0.3s; }
+        .start-box:hover { transform: scale(1.05); background-color: #333; }
+
+        h2 { font-size: 1.2rem; margin: 0; text-transform: uppercase; white-space: nowrap; }
+        h1 { font-size: 3rem; margin: 10px 0; font-weight: 900; white-space: nowrap; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="sobre.html" class="section-dev">
+            <div class="content">
+                <p>SOBRE MIM</p>
+                <h2>MONTECK DEV</h2>
+                <div class="circle"><img src="eu.png" alt="eu"></div>
+            </div>
+        </a>
+
+        <div class="section-game" onclick="iniciarTransicao('missao1.html')">
+            <div class="content">
+                <h1>LEARNGG</h1>
+                <h4>(ALPHA)</h4>
+                <div class="circle"><img src="learngglogo.png" alt="Logo LearnGG"></div>
+                <div class="start-box">COMEÇAR ➔</div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="engine.js"></script>
+</body>
+</html>
