@@ -1,61 +1,88 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HUB</title>
+    <title>LearnGG | Hub Inicial</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
-        .container { display: flex; height: 100%; width: 100%; }
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Orbitron:wght@700&family=VT323&display=swap');
 
-        .section-dev { 
-            flex: 1; background-color: #6b4c9a; color: white; display: flex; flex-direction: column; 
-            align-items: center; justify-content: center; transition: flex 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
-            cursor: pointer; border-right: 2px solid #000; text-decoration: none; overflow: hidden; 
+        :root {
+            --bg-base: #020205; --accent-primary: #00ffcc; 
+            --accent-glow: rgba(0, 255, 204, 0.4); --text-main: #e2e8f0; 
+            --text-muted: #475569;
         }
 
-        .section-game { 
-            flex: 9; background-color: #b9c941; color: black; display: flex; flex-direction: column; 
-            align-items: center; justify-content: center; transition: flex 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); 
-            cursor: pointer; text-decoration: none; overflow: hidden;
+        body { 
+            background-color: var(--bg-base); color: var(--text-main); 
+            font-family: 'Fira Code', monospace; margin: 0; display: flex; 
+            justify-content: center; align-items: center; min-height: 100vh; 
+            overflow: hidden; background-image: radial-gradient(circle at 50% 50%, #0f172a 0%, transparent 80%); 
         }
 
-        .container:hover .section-dev:hover { flex: 2.25; }
-        .container:hover .section-game:hover { flex: 9; } 
-        .container:hover .section-dev:not(:hover) { flex: 1; }
-        .container:hover .section-game:not(:hover) { flex: 9; }
+        .hub-container {
+            display: flex; flex-direction: column; align-items: center; z-index: 10;
+        }
 
-        .content { display: flex; flex-direction: column; align-items: center; min-width: 350px; }
-        .circle { width: 150px; height: 150px; border-radius: 50%; border: 4px solid #000; background: white; margin: 20px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .circle img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .start-box { margin-top: 20px; padding: 15px 40px; background-color: #000; color: #b9c941; font-size: 1.5rem; font-weight: 900; border-radius: 50px; display: flex; align-items: center; gap: 15px; transition: 0.3s; }
-        .start-box:hover { transform: scale(1.05); background-color: #333; }
+        .title-box {
+            text-align: center; margin-bottom: 40px;
+        }
 
-        h2 { font-size: 1.2rem; margin: 0; text-transform: uppercase; white-space: nowrap; }
-        h1 { font-size: 3rem; margin: 10px 0; font-weight: 900; white-space: nowrap; }
+        .main-title {
+            font-family: 'Orbitron', sans-serif; font-size: 3.5rem; color: var(--accent-primary); 
+            margin: 0; text-transform: uppercase; letter-spacing: 4px; text-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .sub-title { color: var(--text-muted); margin-top: 10px; font-size: 1.1rem; }
+
+        .d20-static { 
+            width: 250px; height: 250px; position: relative;
+            filter: drop-shadow(0 0 15px rgba(0, 255, 204, 0.3));
+            animation: float 4s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); filter: drop-shadow(0 0 25px rgba(0, 255, 204, 0.6)); }
+            100% { transform: translateY(0px); }
+        }
+
+        .btn-cast { 
+            background: transparent; color: var(--accent-primary); border: 1px solid var(--accent-primary); 
+            padding: 15px 40px; border-radius: 4px; font-family: 'Orbitron', sans-serif; font-size: 1.2rem;
+            cursor: pointer; transition: 0.3s; margin-top: 50px; text-transform: uppercase; letter-spacing: 2px;
+        }
+        .btn-cast:hover { background: var(--accent-primary); color: #000; box-shadow: 0 0 20px var(--accent-glow); }
     </style>
 </head>
 <body>
-    <div class="container">
-        <a href="sobre.html" class="section-dev">
-            <div class="content">
-                <p>SOBRE MIM</p>
-                <h2>MONTECK DEV</h2>
-                <div class="circle"><img src="eu.png" alt="eu"></div>
-            </div>
-        </a>
 
-        <div class="section-game" onclick="iniciarTransicao('missao1.html')">
-            <div class="content">
-                <h1>LEARNGG</h1>
-                <h4>(ALPHA)</h4>
-                <div class="circle"><img src="learngglogo.png" alt="Logo LearnGG"></div>
-                <div class="start-box">COMEÇAR ➔</div>
-            </div>
+    <div class="hub-container">
+        <div class="title-box">
+            <h1 class="main-title">LearnGG</h1>
+            <p class="sub-title">A Jornada do Código Começa Aqui</p>
         </div>
+
+        <div class="d20-static">
+            <svg viewBox="0 0 100 100" style="width: 100%; height: 100%;">
+                <polygon points="50,5 90,28 90,72 50,95 10,72 10,28" fill="rgba(0, 255, 204, 0.05)" stroke="#00ffcc" stroke-width="2" stroke-linejoin="round"/>
+                <polygon points="25,35 75,35 50,65" fill="rgba(0, 255, 204, 0.1)" stroke="#00ffcc" stroke-width="2" stroke-linejoin="round"/>
+                <line x1="50" y1="5" x2="25" y2="35" stroke="#00ffcc" stroke-width="2"/><line x1="50" y1="5" x2="75" y2="35" stroke="#00ffcc" stroke-width="2"/>
+                <line x1="10" y1="28" x2="25" y2="35" stroke="#00ffcc" stroke-width="2"/><line x1="90" y1="28" x2="75" y2="35" stroke="#00ffcc" stroke-width="2"/>
+                <line x1="10" y1="72" x2="25" y2="35" stroke="#00ffcc" stroke-width="2"/><line x1="10" y1="72" x2="50" y2="65" stroke="#00ffcc" stroke-width="2"/>
+                <line x1="90" y1="72" x2="75" y2="35" stroke="#00ffcc" stroke-width="2"/><line x1="90" y1="72" x2="50" y2="65" stroke="#00ffcc" stroke-width="2"/>
+                <line x1="50" y1="95" x2="50" y2="65" stroke="#00ffcc" stroke-width="2"/>
+                <text x="50" y="52" text-anchor="middle" dominant-baseline="middle" font-family="VT323, monospace" font-size="35" fill="#00ffcc">20</text>
+            </svg>
+        </div>
+
+        <button class="btn-cast" onclick="iniciarJornada()">Entrar no Sistema</button>
     </div>
-    
-    <script src="engine.js"></script>
+
+    <script>
+        function iniciarJornada() {
+            window.location.href = 'missao1.html';
+        }
+    </script>
 </body>
 </html>
