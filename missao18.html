@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnGG | Missão 18: O Devorador de Memória</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Orbitron:wght@700&family=VT323&display=swap');
+
+        :root {
+            --bg-base: #050000; --bg-panel: #0a0000; --accent-primary: #ef4444; 
+            --accent-glow: rgba(239, 68, 68, 0.6); --text-main: #fca5a5; 
+            --text-muted: #7f1d1d; --border-color: #450a0a;
+        }
+
+        body { 
+            background-color: var(--bg-base); color: var(--text-main); 
+            font-family: 'Fira Code', monospace; margin: 0; display: flex; 
+            justify-content: center; align-items: center; min-height: 100vh; 
+            overflow: hidden; background-image: radial-gradient(circle at 50% 50%, #1a0000 0%, #000 100%); 
+        }
+
+       
+        #shatter-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 10000; display: flex; justify-content: center; align-items: center;
+            background: #000; perspective: 1000px; overflow: hidden;
+        }
+        
+        .fatal-error-text {
+            position: absolute; font-family: 'VT323', monospace; color: #ef4444;
+            font-size: 4rem; text-align: center; text-shadow: 0 0 20px #ef4444;
+            animation: glitch-anim 0.2s linear infinite; z-index: 10001;
+        }
+        
+        @keyframes glitch-anim {
+            0% { transform: translate(0) scale(1); opacity: 1; }
+            20% { transform: translate(-5px, 5px) scale(1.05); opacity: 0.8; }
+            40% { transform: translate(-5px, -5px) scale(0.95); opacity: 1; filter: hue-rotate(90deg); }
+            60% { transform: translate(5px, 5px) scale(1.1); opacity: 0.9; }
+            80% { transform: translate(5px, -5px) scale(1); opacity: 1; filter: invert(1); }
+            100% { transform: translate(0) scale(1); opacity: 1; }
+        }
+
+        .impact-flash {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #fff; z-index: 10002; opacity: 0; pointer-events: none;
+        }
+
+        .shard {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: #050000; border: 1px solid #ef4444; box-shadow: inset 0 0 50px rgba(239, 68, 68, 0.2);
+            transition: transform 1.2s cubic-bezier(0.1, 0.8, 0.2, 1), opacity 1s ease-in;
+            opacity: 1; transform-origin: center;
+        }
+
+        
+        #s1 { clip-path: polygon(0 0, 30% 0, 15% 35%, 0 20%); }
+        #s2 { clip-path: polygon(30% 0, 70% 0, 55% 45%, 35% 40%); }
+        #s3 { clip-path: polygon(70% 0, 100% 0, 100% 25%, 80% 35%); }
+        #s4 { clip-path: polygon(0 20%, 15% 35%, 25% 60%, 0 70%); }
+        #s5 { clip-path: polygon(15% 35%, 35% 40%, 45% 65%, 25% 60%); }
+        #s6 { clip-path: polygon(35% 40%, 55% 45%, 65% 70%, 45% 65%); }
+        #s7 { clip-path: polygon(55% 45%, 80% 35%, 90% 60%, 65% 70%); }
+        #s8 { clip-path: polygon(80% 35%, 100% 25%, 100% 80%, 90% 60%); }
+        #s9 { clip-path: polygon(0 70%, 25% 60%, 40% 100%, 0 100%); }
+        #s10 { clip-path: polygon(25% 60%, 45% 65%, 60% 100%, 40% 100%); }
+        #s11 { clip-path: polygon(45% 65%, 65% 70%, 85% 100%, 60% 100%); }
+        #s12 { clip-path: polygon(65% 70%, 90% 60%, 100% 80%, 100% 100%, 85% 100%); }
+
+        
+        .shatter-active .shard { opacity: 0; }
+        .shatter-active #s1 { transform: translate3d(-40vw, -40vh, 200px) rotateX(45deg) rotateY(-45deg) scale(1.5); }
+        .shatter-active #s2 { transform: translate3d(0, -50vh, 300px) rotateX(60deg) scale(1.2); }
+        .shatter-active #s3 { transform: translate3d(40vw, -40vh, 100px) rotateX(30deg) rotateY(45deg) scale(1.4); }
+        .shatter-active #s4 { transform: translate3d(-50vw, 0, 400px) rotateY(-60deg) scale(1.6); }
+        .shatter-active #s5 { transform: translate3d(-20vw, 10vh, 500px) rotateX(20deg) rotateY(-30deg) scale(1.8); }
+        .shatter-active #s6 { transform: translate3d(10vw, -10vh, 600px) rotateX(-20deg) rotateY(30deg) scale(2); }
+        .shatter-active #s7 { transform: translate3d(30vw, 15vh, 450px) rotateX(40deg) rotateY(20deg) scale(1.7); }
+        .shatter-active #s8 { transform: translate3d(50vw, 0, 350px) rotateY(50deg) scale(1.5); }
+        .shatter-active #s9 { transform: translate3d(-40vw, 50vh, 200px) rotateX(-45deg) rotateY(-45deg) scale(1.4); }
+        .shatter-active #s10 { transform: translate3d(-10vw, 60vh, 300px) rotateX(-60deg) scale(1.6); }
+        .shatter-active #s11 { transform: translate3d(20vw, 50vh, 250px) rotateX(-50deg) rotateY(20deg) scale(1.5); }
+        .shatter-active #s12 { transform: translate3d(50vw, 40vh, 150px) rotateX(-30deg) rotateY(45deg) scale(1.3); }
+
+        .flash-active { animation: superFlash 0.8s ease-out forwards; }
+        @keyframes superFlash { 0% { opacity: 1; background: #fff; } 30% { background: #ef4444; } 100% { opacity: 0; display: none; } }
+
+
+        
+        .quest-container { 
+            width: 100%; max-width: 1100px; background: rgba(10, 0, 0, 0.85); 
+            border: 2px solid #7f1d1d; border-radius: 12px; 
+            box-shadow: 0 0 60px rgba(220, 38, 38, 0.4), inset 0 0 20px rgba(153, 27, 27, 0.5); 
+            display: grid; grid-template-columns: 1.1fr 0.9fr; position: relative; z-index: 10; 
+            opacity: 0; backdrop-filter: blur(10px);
+        }
+
+        .quest-header { 
+            grid-column: 1 / -1; background: #000; padding: 20px 30px; 
+            border-bottom: 2px solid var(--accent-primary); display: flex; 
+            justify-content: space-between; align-items: center; border-radius: 12px 12px 0 0;
+        }
+
+        .quest-title { font-family: 'Orbitron', sans-serif; font-size: 1.6rem; color: var(--accent-primary); margin: 0; text-transform: uppercase; animation: pulse-text 2s infinite; letter-spacing: 2px; }
+        @keyframes pulse-text { 0%, 100% { text-shadow: 0 0 10px var(--accent-primary); } 50% { text-shadow: 0 0 25px var(--accent-primary), 0 0 40px #fff; } }
+
+        .lore-panel { padding: 30px; border-right: 2px solid #450a0a; display: flex; flex-direction: column; align-items: center; position: relative; overflow: hidden; }
+
+        
+        .boss-container { width: 350px; height: 350px; position: relative; margin-bottom: 30px; }
+        
+        .boss-svg { width: 100%; height: 100%; filter: drop-shadow(0 0 30px rgba(220, 38, 38, 0.8)); animation: hoverBoss 4s ease-in-out infinite; }
+        @keyframes hoverBoss { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-15px) scale(1.02); } }
+
+        .wire { fill: none; stroke: #991b1b; stroke-width: 4; stroke-linecap: round; animation: writhe 3s infinite alternate ease-in-out; transform-origin: center; }
+        .wire-thick { fill: none; stroke: #450a0a; stroke-width: 8; stroke-linecap: round; animation: writheSlow 5s infinite alternate ease-in-out; transform-origin: center; }
+        
+        @keyframes writhe { 0% { transform: rotate(0deg) scale(1); } 100% { transform: rotate(5deg) scale(1.05); } }
+        @keyframes writheSlow { 0% { transform: rotate(-3deg); } 100% { transform: rotate(3deg); } }
+
+        .core-pulse { animation: coreBeat 1s infinite alternate; }
+        @keyframes coreBeat { 0% { fill: #ef4444; filter: drop-shadow(0 0 20px #ef4444); } 100% { fill: #fff; filter: drop-shadow(0 0 50px #fff); } }
+
+        .eye-glitch { animation: eyeTwitch 2s infinite; }
+        @keyframes eyeTwitch { 0%, 90%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
+
+        
+        .dialogue-box { 
+            background: rgba(0, 0, 0, 0.8); border: 1px solid var(--accent-primary); 
+            padding: 20px; border-radius: 8px; font-family: 'VT323', monospace; 
+            font-size: 1.6rem; line-height: 1.4; color: #fecaca; width: 100%; box-sizing: border-box;
+            box-shadow: inset 0 0 20px rgba(239, 68, 68, 0.3); border-left: 5px solid var(--accent-primary);
+        }
+
+        .action-panel { padding: 40px; display: flex; flex-direction: column; justify-content: space-between; background: rgba(0,0,0,0.4); }
+        
+        .objective-box { background: rgba(0,0,0,0.7); border: 1px dashed var(--accent-primary); padding: 20px; border-radius: 8px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+
+        .doc-tip { background: #000; border-left: 4px solid #f59e0b; padding: 20px; font-size: 0.95rem; color: #fcd34d; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .doc-link { color: #fff; background: #b45309; padding: 8px 15px; text-decoration: none; border-radius: 4px; display: inline-block; margin-top: 15px; font-weight: bold; transition: 0.3s; border: 1px solid #f59e0b; }
+        .doc-link:hover { background: #f59e0b; color: #000; box-shadow: 0 0 15px #f59e0b; }
+
+        .fake-terminal { background: #050000; border-radius: 4px; border: 1px solid #7f1d1d; display: flex; flex-direction: column; box-shadow: inset 0 0 20px #000;}
+        .terminal-header { background: #450a0a; padding: 8px 15px; font-size: 0.75rem; color: #fca5a5; display: flex; gap: 8px; border-bottom: 1px solid #7f1d1d; }
+        .terminal-dot { width: 10px; height: 10px; border-radius: 50%; background: #ff5f56; }
+        .terminal-body { padding: 20px; display: flex; align-items: flex-start; }
+        .terminal-body span { color: var(--accent-primary); margin-right: 15px; font-weight: bold; margin-top: 2px; font-size: 1.2rem; }
+        
+        textarea { 
+            background: transparent; border: none; color: #fff; 
+            font-family: 'Fira Code', monospace; width: 100%; outline: none; 
+            font-size: 1.3rem; resize: none; height: 40px; line-height: 1.5;
+        }
+
+        .btn-cast { 
+            background: #450a0a; color: #fff; border: 1px solid var(--accent-primary); 
+            padding: 18px; width: 100%; border-radius: 4px; font-family: 'Orbitron', sans-serif; 
+            cursor: pointer; transition: 0.3s; margin-top: 20px; text-transform: uppercase; font-weight: bold; font-size: 1.2rem;
+            letter-spacing: 2px;
+        }
+        .btn-cast:hover { background: var(--accent-primary); color: #fff; box-shadow: 0 0 30px var(--accent-glow); }
+
+        .shake { animation: shake 0.3s; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-15px); } 50% { transform: translateX(15px); } 75% { transform: translateX(-15px); } }
+
+        #feedback-modal { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.95); display: flex; justify-content: center; 
+            align-items: center; z-index: 1000; opacity: 0; pointer-events: none; transition: 0.3s; 
+        }
+        .modal-content { background: #1a0505; border: 2px solid var(--accent-primary); padding: 50px; border-radius: 8px; text-align: center; max-width: 600px; box-shadow: 0 0 80px rgba(239, 68, 68, 0.6); }
+        #feedback-modal.active { opacity: 1; pointer-events: all; }
+    </style>
+</head>
+<body>
+
+    <div id="shatter-overlay">
+        <div class="impact-flash" id="flash"></div>
+        <div class="fatal-error-text" id="glitch-text">
+            CRITICAL SYSTEM FAILURE<br>
+            <span style="font-size: 2rem; color: #fff;">MEMORY LEAK DETECTED</span>
+        </div>
+        
+        <div id="shards-container" style="display: none; width: 100%; height: 100%; position: absolute; top:0; left:0;">
+            <div class="shard" id="s1"></div><div class="shard" id="s2"></div><div class="shard" id="s3"></div>
+            <div class="shard" id="s4"></div><div class="shard" id="s5"></div><div class="shard" id="s6"></div>
+            <div class="shard" id="s7"></div><div class="shard" id="s8"></div><div class="shard" id="s9"></div>
+            <div class="shard" id="s10"></div><div class="shard" id="s11"></div><div class="shard" id="s12"></div>
+        </div>
+    </div>
+
+    <div class="quest-container" id="main-ui">
+        <div class="quest-header">
+            <h1 class="quest-title"><i class="fas fa-skull"></i> Boss Fase 1/3: A Fome</h1>
+            <div style="color: var(--accent-primary); font-weight: bold; font-size: 1.2rem;">+1500 XP</div>
+        </div>
+
+        <div class="lore-panel">
+            
+            <div class="boss-container">
+                <svg class="boss-svg" viewBox="0 0 400 400">
+                    <defs>
+                        <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
+                            <stop offset="0%" stop-color="#fff"/>
+                            <stop offset="30%" stop-color="#ef4444"/>
+                            <stop offset="100%" stop-color="#450a0a" stop-opacity="0"/>
+                        </radialGradient>
+                    </defs>
+
+                    <g opacity="0.6">
+                        <path class="wire-thick" d="M 200 200 Q 50 100 0 50"/>
+                        <path class="wire-thick" d="M 200 200 Q 350 100 400 50"/>
+                        <path class="wire" d="M 200 200 Q 100 350 50 400"/>
+                        <path class="wire" d="M 200 200 Q 300 350 350 400"/>
+                        <path class="wire" d="M 150 150 Q 50 250 0 300"/>
+                        <path class="wire" d="M 250 150 Q 350 250 400 300"/>
+                    </g>
+
+                    <path d="M 100 150 L 150 80 L 250 80 L 300 150 L 320 250 L 250 350 L 150 350 L 80 250 Z" fill="#111" stroke="#ef4444" stroke-width="4" stroke-linejoin="round"/>
+                    <path d="M 120 160 L 160 100 L 240 100 L 280 160 L 120 160 Z" fill="#1a0505" stroke="#7f1d1d" stroke-width="2"/>
+                    
+                    <path d="M 100 200 Q 200 300 300 200 Q 200 380 100 200 Z" fill="#000" stroke="#ef4444" stroke-width="3"/>
+                    
+                    <polygon points="120,220 135,260 150,225" fill="#fca5a5"/>
+                    <polygon points="150,225 170,280 190,230" fill="#fca5a5"/>
+                    <polygon points="190,230 210,290 230,230" fill="#fca5a5"/>
+                    <polygon points="230,230 250,280 270,225" fill="#fca5a5"/>
+                    <polygon points="270,225 285,260 290,215" fill="#fca5a5"/>
+
+                    <polygon points="140,280 155,250 170,295" fill="#7f1d1d"/>
+                    <polygon points="170,295 190,260 210,310" fill="#7f1d1d"/>
+                    <polygon points="210,310 230,260 250,295" fill="#7f1d1d"/>
+
+                    <circle cx="200" cy="140" r="30" fill="url(#coreGlow)" class="core-pulse"/>
+
+                    <g class="eye-glitch">
+                        <circle cx="130" cy="130" r="15" fill="#000" stroke="#ef4444" stroke-width="2"/>
+                        <circle cx="130" cy="130" r="5" fill="#ef4444"/>
+                    </g>
+                    <g class="eye-glitch" style="animation-delay: 0.5s;">
+                        <circle cx="270" cy="130" r="15" fill="#000" stroke="#ef4444" stroke-width="2"/>
+                        <circle cx="270" cy="130" r="5" fill="#ef4444"/>
+                    </g>
+                    <circle cx="100" cy="180" r="6" fill="#ef4444" class="eye-glitch" style="animation-delay: 0.2s;"/>
+                    <circle cx="300" cy="180" r="8" fill="#ef4444" class="eye-glitch" style="animation-delay: 0.7s;"/>
+                    <circle cx="170" cy="90" r="4" fill="#ef4444"/>
+                    <circle cx="230" cy="90" r="4" fill="#ef4444"/>
+                </svg>
+            </div>
+
+            <div class="dialogue-box" id="boss-text"></div>
+        </div>
+
+        <div class="action-panel">
+            <div class="doc-tip">
+                <i class="fas fa-search"></i> <strong style="font-size: 1.1rem; text-transform: uppercase;">Missão de Pesquisa:</strong><br><br>
+                O Devorador corrompe a memória RAM ao concatenar strings da forma clássica (<code>texto += "a"</code>). Existe uma <strong>Classe específica em C#</strong> projetada para criar e modificar strings pesadas de forma mutável e totalmente otimizada.<br>
+                <a href="https://learn.microsoft.com/pt-br/dotnet/api/system.text.stringbuilder" target="_blank" class="doc-link">Aceder ao Arquivo Confidencial (Microsoft) ➔</a>
+            </div>
+
+            <div class="objective-box">
+                <p style="margin:0; font-size: 1.1rem; line-height: 1.6;">
+                    Vá até à documentação acima, descubra o nome exato desta classe especializada e <strong>cole o nome dela no terminal</strong> abaixo para invocar o escudo de memória.
+                </p>
+            </div>
+
+            <div class="fake-terminal" id="terminal-box">
+                <div class="terminal-header"><div class="terminal-dot"></div><span>combat_log.cs</span></div>
+                <div class="terminal-body">
+                    <span>></span>
+                    <textarea id="answer" autocomplete="off" spellcheck="false" placeholder="Insira o nome da Classe (Cole aqui)..."></textarea>
+                </div>
+            </div>
+            <button class="btn-cast" id="submit-btn" onclick="checkAnswer()"><i class="fas fa-bolt"></i> Conjurar Artefato</button>
+        </div>
+    </div>
+
+    <div id="feedback-modal">
+        <div class="modal-content">
+            <h2 style="color: #fff; font-family: 'Orbitron', sans-serif; font-size: 2.5rem; text-shadow: 0 0 20px #ef4444; margin-top: 0;">GOLPE CRÍTICO!</h2>
+            <p style="color: #fca5a5; font-family: 'Fira Code', monospace; margin: 30px 0; font-size: 1.2rem; line-height: 1.6;">
+                A classe <strong>StringBuilder</strong> conteve o vazamento de memória! O Devorador uiva em agonia e recua, mas está a preparar um contra-ataque lógico violento...
+            </p>
+            <button class="btn-cast" style="border-color: #fff; color: #fff; text-shadow: 0 0 5px #fff; width: auto; padding: 15px 40px;" onclick="window.location.href='missao19.html'">Persegui-lo (Fase 2) ➔</button>
+        </div>
+    </div>
+
+    <script>
+        
+        window.onload = () => {
+            const glitchText = document.getElementById('glitch-text');
+            const flash = document.getElementById('flash');
+            const shardsContainer = document.getElementById('shards-container');
+            const overlay = document.getElementById('shatter-overlay');
+            const ui = document.getElementById('main-ui');
+
+            
+            setTimeout(() => {
+                
+                glitchText.style.display = 'none';
+                flash.classList.add('flash-active');
+                
+                
+                shardsContainer.style.display = 'block';
+                
+                setTimeout(() => {
+                    overlay.classList.add('shatter-active');
+                }, 50);
+
+                
+                setTimeout(() => {
+                    ui.style.opacity = '1';
+                    ui.style.transition = 'opacity 1s ease-in';
+                    overlay.style.pointerEvents = 'none';
+                    
+                    
+                    typeDialogue("TOLOS... A SUA RAM É MINHA... CADA STRING QUE CONCATENAM ALIMENTA A MINHA FOME... VOCÊS NÃO TÊM O ARTEFATO DE TEXTO PARA ME DETER...");
+                }, 400); 
+
+                setTimeout(() => { overlay.remove(); }, 3000);
+
+            }, 2500); 
+        };
+
+        function typeDialogue(text) {
+            const box = document.getElementById('boss-text');
+            box.innerHTML = '';
+            let i = 0;
+            const speed = 40; 
+            
+            function type() {
+                if (i < text.length) {
+                    box.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        function checkAnswer() {
+            const ans = document.getElementById('answer').value.trim();
+            const term = document.getElementById('terminal-box');
+
+            if (ans.toLowerCase() === 'stringbuilder') {
+                document.getElementById('feedback-modal').classList.add('active');
+            } else {
+                term.classList.add('shake');
+                setTimeout(() => term.classList.remove('shake'), 400);
+            }
+        }
+
+        document.getElementById('answer').addEventListener('keydown', (e) => { 
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault(); 
+                checkAnswer(); 
+            }
+        });
+    </script>
+</body>
+</html>
